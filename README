@@ -1,0 +1,3 @@
+Coffer is a simple authentication system for riak that aims to make riak a multi-tenant data store similar in functionality to S3.
+
+Right now, it doesn't really do anything, move along ;)
