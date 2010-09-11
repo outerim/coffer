@@ -1,3 +1,6 @@
+require 'case'
+require 'revactor'
+
 module Coffer
 end
 

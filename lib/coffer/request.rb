@@ -1,5 +1,5 @@
 module Coffer
-  REQUEST_PATH   = 'REQUEST_PATH'.freeze
+  PATH_INFO      = 'PATH_INFO'.freeze
   REQUEST_METHOD = 'REQUEST_METHOD'.freeze
 
   class Request
@@ -7,7 +7,7 @@ module Coffer
 
     def initialize(env)
       @method = env[REQUEST_METHOD].downcase.to_sym
-      @path   = env[REQUEST_PATH].downcase
+      @path   = env[PATH_INFO].downcase
     end
   end
 end

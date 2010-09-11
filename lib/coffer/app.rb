@@ -10,7 +10,7 @@ module Coffer
 
     def call
       case [request.method, request.path]
-        when Case[:get, %r!^/test!]
+        when Case[:get, %r!^/test/(.+)!]
           dummy2
         when Case[:get, Object]
           dummy
