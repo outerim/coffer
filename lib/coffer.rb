@@ -17,3 +17,4 @@ end
 
 require 'coffer/app'
 require 'coffer/request'
+require 'coffer/riak_monkeypatch'

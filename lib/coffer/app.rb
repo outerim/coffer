@@ -11,19 +11,36 @@ module Coffer
     def call
       case [request.method, request.path]
         when Case[:put, Object]
-          create_object(*request.path[1..-1].split('/'))
+          create_object(*bucket_and_key_from_uri)
+        when Case[:get, Object]
+          retrieve_object(*bucket_and_key_from_uri)
         else
-          [404, { "Content-type" => "text/html" }, ["Not Found"]]
+          render_404
       end
     end
 
     def create_object(bucket, key)
+      # TODO: stream files in? split biig files to multiple keys & link?
       obj = store.bucket(bucket).new(key)
       obj.content_type = post_type
       obj.data = post_data
 
-      obj.store
+      obj.store(:returnbody => false) # We're not going to use the body, so don't read it back
       [200, {}, []]
+    end
+
+    def retrieve_object(bucket, key)
+      obj = store.bucket(bucket).get(key)
+
+      [200, headers_for_object(obj), [obj.data]]
+    end
+
+    def render_404
+      [404, { "Content-type" => "text/html" }, ["Not Found"]]
+    end
+
+    def headers_for_object(obj)
+      { "Content-type" => obj.content_type }
     end
 
     def post_data
@@ -40,6 +57,11 @@ module Coffer
 
     def store
       Coffer.store
+    end
+
+    def bucket_and_key_from_uri
+      # TODO: Should we allow / in a bucket name? I think so, in which case this is a broken approach
+      request.path[1..-1].split('/')
     end
   end
 end
