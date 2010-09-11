@@ -10,26 +10,36 @@ module Coffer
 
     def call
       case [request.method, request.path]
-        when Case[:get, %r!^/test/(.+)!]
-          dummy2
-        when Case[:get, Object]
-          dummy
+        when Case[:put, Object]
+          create_object(*request.path[1..-1].split('/'))
         else
-          [404, { "Content-type" => "text/html" }, "Not Found"]
+          [404, { "Content-type" => "text/html" }, ["Not Found"]]
       end
     end
 
-    def dummy2
-      [200, { "Content-type" => "text/html" }, ["Hello Worldsss"]]
+    def create_object(bucket, key)
+      obj = store.bucket(bucket).new(key)
+      obj.content_type = post_type
+      obj.data = post_data
+
+      obj.store
+      [200, {}, []]
     end
 
-    def dummy
-      Actor.sleep(1)
-      [200, { "Content-type" => "text/html" }, ["Hello World"]]
+    def post_data
+      @env['rack.input'].read
+    end
+
+    def post_type
+      @env['Content-type']
     end
 
     def request
       @request ||= Request.new(@env)
+    end
+
+    def store
+      Coffer.store
     end
   end
 end

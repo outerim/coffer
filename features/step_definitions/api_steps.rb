@@ -1,10 +1,10 @@
-When /^I store a document '([^']+)' as public$/ do |file|
+When /^I store a document '([^']+)' as public to '([^']+)\/([^']+)'$/ do |file, bucket, key|
   file = fixture_file(file)
   
-  pending # express the regexp above with the code you wish you had
+  put "/#{bucket}/#{key}", file.data, { 'Content-type' => file.type }
 end
 
 Then /^the request should succeed$/ do
-  pending # express the regexp above with the code you wish you had
+  (200..299).should include(last_response.status)
 end
 
