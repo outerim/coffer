@@ -13,4 +13,4 @@ module Coffer
 end
 
 require 'riak/robject'
-#Riak::RObject.send(:include, Coffer::RObjectHacks)
+Riak::RObject.send(:include, Coffer::RObjectHacks)

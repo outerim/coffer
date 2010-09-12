@@ -13,3 +13,8 @@ group :development do
   gem "rspec",     "~>2.0.0.beta.20"
 end
 
+group :autotest do
+  gem "ZenTest"
+  gem "autotest-growl"
+end
+

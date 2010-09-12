@@ -1,0 +1,6 @@
+{
+  'this': 1
+  'is': 'raw'
+  'json': { 'woo': 'woo' }
+  'adding': 'an attribute'
+}
