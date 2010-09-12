@@ -14,6 +14,8 @@ module Coffer
           create_object(*bucket_and_key_from_uri)
         when Case[:get, Object]
           retrieve_object(*bucket_and_key_from_uri)
+        when Case[:delete, Object]
+          delete_object(*bucket_and_key_from_uri)
         else
           render_404
       end
@@ -35,6 +37,11 @@ module Coffer
       [200, headers_for_object(obj), [obj.data]]
     rescue Riak::FailedRequest => fr
       handle_exception(fr)
+    end
+
+    def delete_object(bucket, key)
+      resp = store.bucket(bucket).delete(key)
+      [resp[:code], {}, []]
     end
 
     def render_404

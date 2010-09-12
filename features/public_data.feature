@@ -28,4 +28,16 @@ Feature: Public data storage and retrieval
     Given the data store is empty
     When I request 'bucket/key'
     Then the response code should be 404
-      And the response should be empty
+    And the response should be empty
+
+  Scenario: Removing an object that exists
+    Given a public document 'data.json' has been stored at 'bucket/key'
+    When I delete 'bucket/key'
+    Then the response code should be 204
+    And the response should be empty
+
+  Scenario: Removing a nonexistent object
+    Given the data store is empty
+    When I delete 'bucket/key'
+    Then the response code should be 404
+    And the response should be empty
