@@ -1,16 +1,14 @@
 module DataStore
   def self.test_buckets
-    %w( bucket )
+    %w( bucket coffer_tokens )
   end
 
   module RealRiak
     def wipe_data_store
       DataStore.test_buckets.each do |bucket|
         bucket = Coffer.store.bucket(bucket)
-        bucket.keys do |keys|
-          keys.each do |key|
-            bucket.delete(key, :rw => 'all')
-          end
+        bucket.keys.each do |key|
+          bucket.delete(key, :rw => 'all')
         end
       end
     end

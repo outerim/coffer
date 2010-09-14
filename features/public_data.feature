@@ -1,13 +1,13 @@
 Feature: Public data storage and retrieval
   Scenario: Storing a public document
     Given the data store is empty
-      #And I am authenticated as token user 'A'
+      And I am authenticated to 'TOKEN1'
     When I store a document 'data.json' as public to 'bucket/key'
     Then the request should be successful
 
   Scenario: Retrieving a document stored publically
     Given the data store is empty
-      And a public document 'data.json' has been stored at 'bucket/key'
+      And a public document 'data.json' has been stored at 'bucket/key' for 'TOKEN1'
       And I am an unauthenticated user
     When I request 'bucket/key'
     Then the request should be successful
@@ -18,7 +18,8 @@ Feature: Public data storage and retrieval
 
   Scenario: Updating a previously stored document
     Given the data store is empty
-      And a public document 'data.json' has been stored at 'bucket/key'
+      And a public document 'data.json' has been stored at 'bucket/key' for 'TOKEN1'
+      And I am authenticated to 'TOKEN1'
     When I update 'bucket/key' with 'other_data.json'
     Then the request should be successful
     When I request 'bucket/key'
@@ -31,13 +32,15 @@ Feature: Public data storage and retrieval
     And the response should be empty
 
   Scenario: Removing an object that exists
-    Given a public document 'data.json' has been stored at 'bucket/key'
+    Given a public document 'data.json' has been stored at 'bucket/key' for 'TOKEN1'
+      And I am authenticated to 'TOKEN1'
     When I delete 'bucket/key'
     Then the response code should be 204
     And the response should be empty
 
   Scenario: Removing a nonexistent object
     Given the data store is empty
+      And I am authenticated to 'TOKEN1'
     When I delete 'bucket/key'
     Then the response code should be 404
     And the response should be empty

@@ -19,5 +19,4 @@ module MyWorld
   end
 end
 
-
 World(MyWorld)

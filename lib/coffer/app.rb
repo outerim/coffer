@@ -1,5 +1,8 @@
 module Coffer
   class App
+    class NotAuthorized < StandardError; end
+    class NotFound < StandardError; end
+
     def self.handler
       lambda { |env| self.new(env).call }
     end
@@ -9,23 +12,35 @@ module Coffer
     end
 
     def call
-      case [request.method, request.path]
-        when Case[:put, Object], Case[:post, Object]
+      route_request
+    rescue NotAuthorized
+      not_authorized
+    rescue NotFound
+      not_found
+    #rescue
+      #internal_error
+    end
+
+    def route_request
+      case [request.request_method.to_sym, request.path]
+        when Case[:PUT, Object], Case[:POST, Object]
           create_object(*bucket_and_key_from_uri)
-        when Case[:get, Object]
+        when Case[:GET, Object]
           retrieve_object(*bucket_and_key_from_uri)
-        when Case[:delete, Object]
+        when Case[:DELETE, Object]
           delete_object(*bucket_and_key_from_uri)
         else
-          render_404
+          raise NotFound
       end
     end
 
     def create_object(bucket, key)
+      raise NotAuthorized if !user.valid?
+
       # TODO: stream files in? split biig files to multiple keys & link?
       obj = store.bucket(bucket).get_or_new(key)
-      obj.content_type = post_type
-      obj.data = post_data
+      obj.content_type = request.content_type
+      obj.data = request.body.read
 
       obj.store(:returnbody => false) # We're not going to use the body, so don't read it back
       [200, {}, []]
@@ -40,12 +55,10 @@ module Coffer
     end
 
     def delete_object(bucket, key)
+      raise NotAuthorized if !user.valid?
+
       resp = store.bucket(bucket).delete(key)
       [resp[:code], {}, []]
-    end
-
-    def render_404
-      [404, { "Content-type" => "text/html" }, ["Not Found"]]
     end
 
     def headers_for_object(obj)
@@ -55,20 +68,24 @@ module Coffer
       }
     end
 
-    def post_data
-      @env['rack.input'].read
-    end
-
-    def post_type
-      @env['Content-type']
-    end
-
     def request
-      @request ||= Request.new(@env)
+      @request ||= Rack::Request.new(@env)
     end
 
     def store
       Coffer.store
+    end
+
+    def user
+      @user ||= User.new(request.env['API_TOKEN'], request.env['API_KEY'])
+    end
+
+    def not_found
+      [404, { "Content-type" => "text/html" }, ["Not Found"]]
+    end
+
+    def not_authorized
+      [403, { "Content-type" => "text/html" }, ["Not Authorized"]]
     end
 
     def bucket_and_key_from_uri

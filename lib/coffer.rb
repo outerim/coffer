@@ -13,8 +13,12 @@ module Coffer
   def self.setup_store(options={})
     @store ||= Riak::Client.new(DefaultStoreOptions.merge(options))
   end
+
+  def self.tokens
+    store.bucket('coffer_tokens')
+  end
 end
 
 require 'coffer/app'
-require 'coffer/request'
+require 'coffer/user'
 require 'coffer/riak_monkeypatch'
