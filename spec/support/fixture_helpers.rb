@@ -1,6 +1,15 @@
 module FixtureHelpers
   FIXTURE_DIR = File.join(File.dirname(__FILE__), '..', 'fixtures')
 
+  def random_file
+    files = Dir.glob(File.join(FIXTURE_DIR, '*'))
+    File.basename(files[rand(files.size)])
+  end
+
+  def random_fixture_file
+    fixture_file random_file
+  end
+
   def fixture_file(file)
     file = File.join(FIXTURE_DIR, file)
 

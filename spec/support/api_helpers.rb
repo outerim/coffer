@@ -1,21 +1,35 @@
 module ApiHelpers
-  def api_store(bucket, key, file)
+  def api_create(bucket, key, file=random_fixture_file)
     warn_if_not_test_bucket(bucket)
     put "/#{bucket}/#{key}", file.data, { 'CONTENT_TYPE' => file.type }.merge(authn_headers)
+    file
   end
 
-  def api_update(bucket, key, file)
+  def api_update(bucket, key, file=random_fixture_file)
     warn_if_not_test_bucket(bucket)
     post "/#{bucket}/#{key}", file.data, { 'CONTENT_TYPE' => file.type }.merge(authn_headers)
+    file
   end
 
-  def api_fetch(bucket, key)
+  def api_get(bucket, key)
     warn_if_not_test_bucket(bucket)
     get "/#{bucket}/#{key}", {}, authn_headers
   end
 
   def api_delete(bucket, key)
     delete "/#{bucket}/#{key}", {}, authn_headers
+  end
+
+  def as_token(token)
+    old_token, @token = @token, token
+    if block_given?
+      yield
+      @token = old_token
+    end
+  end
+
+  def as_unauthenticated(&block)
+    as_token(nil, &block)
   end
 
   def warn_if_not_test_bucket(bucket)

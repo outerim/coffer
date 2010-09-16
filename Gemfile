@@ -11,10 +11,5 @@ group :development do
   gem "cucumber", "~>0.8.5"
   gem "rack-test", "~>0.5.4"
   gem "rspec",     "~>2.0.0.beta.20"
+  gem "watchr"
 end
-
-group :autotest do
-  gem "ZenTest"
-  gem "autotest-growl"
-end
-
