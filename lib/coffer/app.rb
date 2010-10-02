@@ -35,12 +35,12 @@ module Coffer
     end
 
     def create_object(bucket, key)
-      raise NotAuthorized if !user.valid?
+      raise NotAuthorized unless user.valid? && user.owns_bucket?(bucket)
 
       # TODO: stream files in? split biig files to multiple keys & link?
       obj = store.bucket(bucket).get_or_new(key)
       obj.content_type = request.content_type
-      obj.data = request.body.read
+      obj.raw_data = request.body.read
 
       obj.store(:returnbody => false) # We're not going to use the body, so don't read it back
       [200, {}, []]
@@ -49,13 +49,13 @@ module Coffer
     def retrieve_object(bucket, key)
       obj = store.bucket(bucket).get(key)
 
-      [200, headers_for_object(obj), [obj.data]]
+      [200, headers_for_object(obj), [obj.raw_data]]
     rescue Riak::FailedRequest => fr
       handle_exception(fr)
     end
 
     def delete_object(bucket, key)
-      raise NotAuthorized if !user.valid?
+      raise NotAuthorized unless user.valid? && user.owns_bucket?(bucket)
 
       resp = store.bucket(bucket).delete(key)
       [resp[:code], {}, []]

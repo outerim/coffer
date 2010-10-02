@@ -20,6 +20,13 @@ module ApiHelpers
     delete "/#{bucket}/#{key}", {}, authn_headers
   end
 
+  def claim_for(token, bucket)
+    bucket = Coffer.buckets.new(bucket)
+    bucket.content_type = 'application/json'
+    bucket.data = { 'authorized_tokens' => [token] }
+    bucket.store
+  end
+
   def as_token(token)
     old_token, @token = @token, token
     if block_given?
@@ -48,8 +55,14 @@ module ApiHelpers
   rescue => e
     obj = Coffer.tokens.new(token)
     obj.content_type = 'application/json'
-    obj.data = { 'key' => rand(1000).to_s }.to_json
+    obj.data = { 'key' => random_token }.to_json
     obj.store(:dw => 'all')
     retry
+  end
+
+  def random_token
+    token = ''
+    10.times { token << ('a'..'z').to_a[rand(26)] }
+    token
   end
 end

@@ -1,6 +1,6 @@
 module DataStore
   def self.test_buckets
-    %w( bucket coffer_tokens )
+    %w( bucket __coffer_tokens __coffer_buckets )
   end
 
   module RealRiak

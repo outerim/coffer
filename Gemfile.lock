@@ -1,3 +1,15 @@
+GIT
+  remote: http://github.com/seancribbs/ripple.git
+  revision: def2676ae5db2cd961e41efd78c2f0e792d259b7
+  specs:
+    riak-client (0.8.0)
+      activesupport (>= 2.3.5)
+      i18n (~> 0.4.0)
+    ripple (0.8.0)
+      activemodel (= 3.0.0)
+      activesupport (= 3.0.0)
+      riak-client (= 0.8.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -32,13 +44,6 @@ GEM
     revactor (0.1.5)
       case (>= 0.4)
       rev (>= 0.3.1)
-    riak-client (0.8.0)
-      activesupport (>= 2.3.5)
-      i18n (~> 0.4.0)
-    ripple (0.8.0)
-      activemodel (= 3.0.0)
-      activesupport (= 3.0.0)
-      riak-client (= 0.8.0)
     rspec (2.0.0.beta.20)
       rspec-core (= 2.0.0.beta.20)
       rspec-expectations (= 2.0.0.beta.20)
@@ -62,6 +67,6 @@ DEPENDENCIES
   rack-test (~> 0.5.4)
   rainbows (~> 0.97.0)
   revactor (~> 0.1.5)
-  ripple (~> 0.8.0)
+  ripple!
   rspec (~> 2.0.0.beta.20)
   watchr

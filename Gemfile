@@ -3,7 +3,7 @@ source :gemcutter
 group :runtime do
   gem "rainbows", "~>0.97.0"
   gem "revactor", "~>0.1.5"
-  gem "ripple",   "~>0.8.0"
+  gem "ripple", :git => "http://github.com/seancribbs/ripple.git"
   gem "curb",     "~>0.7.8"
 end
 

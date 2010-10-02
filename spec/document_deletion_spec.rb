@@ -1,6 +1,11 @@
 require File.dirname(__FILE__) + "/spec_helper.rb"
 
 describe "Deleting a document" do
+  before { 
+    @bucket, @key = "bucket", "key"
+    claim_for "TOKEN1", @bucket
+  }
+
   shared_examples_for "a failing delete" do
     it { last_response.should_not be_successful }
 
@@ -13,7 +18,7 @@ describe "Deleting a document" do
   describe "that exists" do
     before {
       as_token "TOKEN1"
-      api_create @bucket = "bucket", @key = "key"
+      api_create @bucket, @key
     }
 
     describe "as an unauthenticated user" do
@@ -26,8 +31,8 @@ describe "Deleting a document" do
     describe "as an authenticated user who does not own the document" do
       before { as_token "TOKEN2"; api_delete @bucket, @key }
       
-      # Pending, need to add this functionality
-      # it_behaves_like "a failing delete"
+      it_behaves_like "a failing delete"
+      it { last_response.status.should == 403 }
     end
 
     describe "as the owner of the document" do

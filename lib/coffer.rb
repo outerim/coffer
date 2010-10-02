@@ -6,19 +6,21 @@ module Coffer
   DefaultStoreOptions = { :host => 'localhost', :port => 8091 }
 
   def self.store
-    setup_store unless @store
-    @store
-  end
-
-  def self.setup_store(options={})
-    @store ||= Riak::Client.new(DefaultStoreOptions.merge(options))
+    Thread.current[:riak_client] ||= Riak::Client.new(riak_config)
   end
 
   def self.tokens
-    store.bucket('coffer_tokens')
+    store['__coffer_tokens']
+  end
+
+  def self.buckets
+    store['__coffer_buckets']
+  end
+
+  def self.riak_config
+    DefaultStoreOptions
   end
 end
 
 require 'coffer/app'
 require 'coffer/user'
-require 'coffer/riak_monkeypatch'
