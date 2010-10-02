@@ -51,7 +51,7 @@ module Coffer
 
       [200, headers_for_object(obj), [obj.raw_data]]
     rescue Riak::FailedRequest => fr
-      handle_exception(fr)
+      handle_riak_error(fr)
     end
 
     def delete_object(bucket, key)
@@ -93,7 +93,7 @@ module Coffer
       request.path[1..-1].split('/')
     end
 
-    def handle_exception(fr)
+    def handle_riak_error(fr)
       if fr.code.to_i == 404
         [404, {}, []]
       else
